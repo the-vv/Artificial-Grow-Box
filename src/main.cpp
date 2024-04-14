@@ -11,17 +11,20 @@
 // System Specific values
 #define TemperatureThreshold 25
 #define MoistureThreshold 50
+// #define lightOnTime 8UL * 60UL * 60UL * 1000UL // 8 hours
+// #define lightOffTime 16UL * 60UL * 60UL * 1000UL // 16 hours
+#define lightOnTime 5000 // 8 hours
+#define lightOffTime 1000 // 16 hours
 
 DHT_Unified dht(TEMP_HUMIDITY_SENSOR_PIN, DHT11);
 
 float getTemperature();
 float getMoisturePercentage();
 void lightScheduler(int pin);
-uint8_t lightState = HIGH;
+uint8_t lightState = 1;
 
 // Blink without delay for light
-static unsigned long previousMillisOn = 0;
-static unsigned long previousMillisOff = 0;
+static unsigned long previousMillis = 0;
 
 void setup()
 {
@@ -34,13 +37,12 @@ void setup()
 
   digitalWrite(PELTIER_FAN_PIN, HIGH);
   digitalWrite(PUMP_PIN, HIGH);
-  digitalWrite(LIGHT_PIN, HIGH);
+  digitalWrite(LIGHT_PIN, lightState);
 
   Serial.begin(9600);
 
   delay(1000);
 
-  // digitalWrite(LIGHT_PIN, lightState);
 }
 
 void loop()
@@ -78,31 +80,15 @@ float getMoisturePercentage()
 
 void lightScheduler(int pin)
 {
-  // logic be like
-  // when arduino starts, light should be on for 8 hours
-  // then off for 16 hours
-  // then on for 8 hours
-  unsigned long currentMillis = millis();
-  // unsigned long delayTimeOn = 8 * 60 * 60 * 1000; // 8 hours
-  // unsigned long delayTimeOff = 16 * 60 * 60 * 1000; // 16 hours
-  if (lightState == HIGH)
+  unsigned long currentMillis = millis(); // Get the current time
+
+  if (currentMillis - previousMillis >= (lightState ? lightOffTime : lightOnTime))
   {
-    if (currentMillis - previousMillisOff >= 2000)
-    {
-      previousMillisOff = currentMillis;
-      lightState = LOW;
-      digitalWrite(pin, lightState);
-      previousMillisOn = currentMillis;
-    }
-  }
-  else
-  {
-    if (currentMillis - previousMillisOn >= 500)
-    {
-      previousMillisOn = currentMillis;
-      lightState = HIGH;
-      digitalWrite(pin, lightState);
-    }
+    previousMillis = currentMillis;
+    lightState = !lightState;
+    digitalWrite(pin, lightState);
+    Serial.print("Light is ");
+    Serial.println(!lightState ? "on" : "off");
   }
 
 }
