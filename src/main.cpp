@@ -163,16 +163,16 @@ void displayPeripheralsStatus()
     lcd.setCursor(0, 0);
     lcd.print("F:");
     lcd.print(currentFanState ? "OFF" : "ON");
-    lcd.print("  P:");
+    lcd.print(" P:");
     lcd.print(currentPumpState ? "OFF" : "ON");
-    lcd.print("  L:");
-    lcd.print(currentLightState ? "OFF" : "ON");
+    lcd.print(" L:");
+    lcd.print(currentLightState ? "OFF" : "ON ");
     Serial.print("Fan: ");
     Serial.print(currentFanState ? "OFF" : "ON");
     Serial.print(", Pump: ");
     Serial.print(currentPumpState ? "OFF" : "ON");
     Serial.print(", Light: ");
-    Serial.println(currentLightState ? "OFF" : "ON");
+    Serial.println(currentLightState ? "OFF" : "ON ");
 
     prevFanState = currentFanState;
     prevPumpState = currentPumpState;
