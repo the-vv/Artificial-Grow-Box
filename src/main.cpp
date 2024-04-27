@@ -149,7 +149,7 @@ void displayEnviornmentInfo(float temperature, int moisture)
   Serial.print(temperature);
   Serial.print("C, Moisture: ");
   Serial.print(moisture);
-  Serial.println("%");
+  Serial.println("% ");
 }
 
 void displayPeripheralsStatus()
